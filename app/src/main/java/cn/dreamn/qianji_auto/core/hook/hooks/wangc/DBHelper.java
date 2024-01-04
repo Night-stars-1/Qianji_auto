@@ -109,7 +109,7 @@ public class DBHelper {
         if (!db.isOpen()) {
             openDb();
         }
-        Cursor parentCursor = db.rawQuery("select * from parentcategory where userid = ?", new String[]{String.valueOf(UserId)});
+        Cursor parentCursor = db.rawQuery("select * from parentcategory where userid = ?", new String[]{UserId});
         utils.log("父级分类信息数量: " + parentCursor.getCount() + "", false);
         JSONArray jsonArray = new JSONArray();
         while (parentCursor.moveToNext()) {
@@ -132,7 +132,7 @@ public class DBHelper {
             jsonArray.add(jsonObject);
         }
         parentCursor.close();
-        Cursor childCursor = db.rawQuery("select * from childcategory where userid = ?", new String[]{String.valueOf(UserId)});
+        Cursor childCursor = db.rawQuery("select * from childcategory where userid = ?", new String[]{UserId});
         utils.log("子级分类信息数量: " + childCursor.getCount() + "", false);
         while (childCursor.moveToNext()) {
             String parentId = childCursor.getString(childCursor.getColumnIndex("parentcategoryid"));
@@ -170,7 +170,7 @@ public class DBHelper {
         if (!db.isOpen()) {
             openDb();
         }
-        Cursor cursor = db.rawQuery("select * from asset where userid = ?", new String[]{String.valueOf(UserId)});
+        Cursor cursor = db.rawQuery("select * from asset where userid = ?", new String[]{UserId});
         utils.log("资产信息数量: " + cursor.getCount(), false);
         JSONArray jsonArray = new JSONArray();
         while (cursor.moveToNext()) {
@@ -187,25 +187,12 @@ public class DBHelper {
         return jsonArray;
     }
 
-    public String getUserId() {
-        if (!db.isOpen()) {
-            openDb();
-        }
-        Cursor cursor = db.rawQuery("select * from userdb where id='1'", null);
-        String id = "";
-        while (cursor.moveToNext()) {
-            id = cursor.getString(cursor.getColumnIndex("userid"));
-        }
-        cursor.close();
-        return id;
-    }
-
     @SuppressLint("Range")
     public JSONArray getUserBook(String UserId) {
         if (!db.isOpen()) {
             openDb();
         }
-        Cursor cursor = db.rawQuery("select * from accountbook where userid = ?", new String[]{String.valueOf(UserId)});
+        Cursor cursor = db.rawQuery("select * from accountbook where userid = ?", new String[]{UserId});
         JSONArray jsonArray = new JSONArray();
         boolean has = false;
         while (cursor.moveToNext()) {
@@ -231,6 +218,19 @@ public class DBHelper {
         }
 
         return jsonArray;
+    }
+
+    public String getUserId() {
+        if (!db.isOpen()) {
+            openDb();
+        }
+        Cursor cursor = db.rawQuery("select * from userdb where id='1'", null);
+        String id = "";
+        while (cursor.moveToNext()) {
+            id = cursor.getString(cursor.getColumnIndex("userid"));
+        }
+        cursor.close();
+        return id;
     }
 
     @SuppressLint("Range")

@@ -13,6 +13,7 @@ public class AppList {
         mList.clear();
         mList.add(QianJi.getInstance());
         mList.add(Wangc.getInstance());
+        mList.add(Weimu.getInstance());
         /*
          * 请在此处新增你的记账app
          * 相关文档请参考：

@@ -101,6 +101,12 @@
       "value": "com.wangc.bill",
       "sub": "社区适配",
       "icon": "&#xe662;"
+    },
+    {
+      "name": "记得记账",
+      "value": "com.weimu.remember.bookkeeping",
+      "sub": "社区适配",
+      "icon": "&#xe662;"
     }
   ],
   [

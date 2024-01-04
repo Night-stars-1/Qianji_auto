@@ -6,6 +6,7 @@ import java.util.List;
 import cn.dreamn.qianji_auto.core.hook.core.hookBase;
 import cn.dreamn.qianji_auto.core.hook.hooks.alipay.Alipay;
 import cn.dreamn.qianji_auto.core.hook.hooks.auto.QianjiAuto;
+import cn.dreamn.qianji_auto.core.hook.hooks.kylec.Kylec;
 import cn.dreamn.qianji_auto.core.hook.hooks.notice.Notice;
 import cn.dreamn.qianji_auto.core.hook.hooks.qianji.Qianji;
 import cn.dreamn.qianji_auto.core.hook.hooks.wangc.Wangc;
@@ -13,6 +14,7 @@ import cn.dreamn.qianji_auto.core.hook.hooks.qq.QQ;
 import cn.dreamn.qianji_auto.core.hook.hooks.sdu_pass.SDUPass;
 import cn.dreamn.qianji_auto.core.hook.hooks.sms.Sms;
 import cn.dreamn.qianji_auto.core.hook.hooks.wechat.Wechat;
+import cn.dreamn.qianji_auto.core.hook.hooks.weimu.Weimu;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -26,6 +28,8 @@ public class HookMain implements IXposedHookLoadPackage {
         mHookList.add(QianjiAuto.getInstance());
         mHookList.add(Qianji.getInstance());
         mHookList.add(Wangc.getInstance());
+        //mHookList.add(Kylec.getInstance());
+        mHookList.add(Weimu.getInstance());
         mHookList.add(Alipay.getInstance());
         mHookList.add(Wechat.getInstance());
         mHookList.add(Sms.getInstance());

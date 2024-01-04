@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -17,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.hjq.toast.Toaster;
 import com.tencent.mmkv.MMKV;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,23 +34,23 @@ import cn.dreamn.qianji_auto.utils.runUtils.RootUtils;
 import cn.dreamn.qianji_auto.utils.runUtils.TaskThread;
 import cn.dreamn.qianji_auto.utils.runUtils.Tool;
 
-public class Wangc implements IApp {
-    private static Wangc wangc;
+public class Weimu implements IApp {
+    private static Weimu wangc;
     static long time = 0;
 
-    public static Wangc getInstance(){
+    public static Weimu getInstance(){
         if(wangc==null)
-            wangc=new Wangc();
+            wangc=new Weimu();
         return wangc;
     }
     @Override
     public String getPackPageName() {
-        return "com.wangc.bill";
+        return "com.weimu.remember.bookkeeping";
     }
 
     @Override
     public String getAppName() {
-        return "一木记账";
+        return "记得记账";
     }
 
 
@@ -65,23 +67,15 @@ public class Wangc implements IApp {
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == 0) {
                     time = System.currentTimeMillis();
-                    if (billInfo.getType().equals(BillInfo.TYPE_TRANSFER_ACCOUNTS)) {
-                        Intent intent = new Intent();
-                        intent.setClassName("com.wangc.bill", "com.wangc.bill.activity.SchemeAddActivity");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Uri uri = Uri.parse(getQianJi(billInfo));
-                        intent.setData(uri);
-                        context.startActivity(intent);
-                    } else {
-                        if (RootUtils.hasRootPermission()) {
-                            RootUtils.exec(new String[]{"am start \"" + getQianJi(billInfo) + "\""});
-                        } else {
-                            Tool.goUrl(context, getQianJi(billInfo));
-                        }
-                    }
+                    Intent intent = new Intent();
+                    intent.setClassName("com.weimu.remember.bookkeeping", "com.alipay.sdk.app.AlipayResultActivity");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Uri uri = Uri.parse(getQianJi(billInfo));
+                    intent.setData(uri);
+                    context.startActivity(intent);
 
                     //TODO 4.0新增：多币种记账支持，此处预留修改位。
-                    Toaster.show(String.format(context.getString(R.string.book_success), billInfo.getMoney()));
+                    //Toaster.show(String.format(context.getString(R.string.book_success), billInfo.getMoney()));
                 }
             }
         };
@@ -107,21 +101,21 @@ public class Wangc implements IApp {
     @Override
     public void asyncDataBefore(Context context, int type) {
         if (AppStatus.isXposed()) {
-            Log.i("一木记账:自动记账同步", "同步开始");
+            Log.i("记得记账:自动记账同步", "同步开始");
 
-            RootUtils.exec(new String[]{"am force-stop com.wangc.bill"});
+            RootUtils.exec(new String[]{"am force-stop com.weimu.remember.bookkeeping"});
             //杀死其他应用
-            //  Tool.stopApp(context,"com.wangc.bill");
+            //  Tool.stopApp(context,"com.weimu.remember.bookkeeping");
             Intent intent = new Intent();
-            intent.setClassName("com.wangc.bill", "com.wangc.bill.activity.MainActivity");
+            intent.setClassName("com.weimu.remember.bookkeeping", "com.weimu.remember.bookkeeping.MainActivity");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("AutoSignal", type);
             MMKV mmkv = MMKV.defaultMMKV();
             mmkv.encode("AutoSignal", type);
-            Log.i("一木记账:自动记账同步", "正在前往一木记账");
+            Log.i("记得记账:自动记账同步", "正在前往记得记账");
             context.startActivity(intent);
         } else {
-            Toaster.show(context.getResources().getString(R.string.not_support).replaceAll("钱迹", "一木记账"));
+            Toaster.show(context.getResources().getString(R.string.not_support).replaceAll("钱迹", "记得记账"));
         }
     }
 
@@ -132,13 +126,14 @@ public class Wangc implements IApp {
         JSONArray asset = jsonObject.getJSONArray("asset");
         JSONArray category = jsonObject.getJSONArray("category");
         JSONArray userBook = jsonObject.getJSONArray("userBook");
+        android.util.Log.i("记得记账", "doAsync: "+userBook);
         List<String> userBookList = new ArrayList<>();
 
         Handler mHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == 1) {
-                    Log.i("一木记账:doAsync", (String) msg.obj);
+                    Log.i("记得记账:doAsync", (String) msg.obj);
                 } else {
                     Toaster.show(R.string.async_success);
                 }
@@ -147,7 +142,7 @@ public class Wangc implements IApp {
         };
 
         if (asset == null || category == null || userBook == null) {
-            Log.i("一木记账:doAsync", "一木记账数据信息无效");
+            Log.i("记得记账:doAsync", "记得记账数据信息无效");
             return;
         }
 
@@ -182,7 +177,7 @@ public class Wangc implements IApp {
 
             }
 
-            Log.i("一木记账:doAsync", "分类数据处理完毕");
+            Log.i("记得记账:doAsync", "分类数据处理完毕");
 
             //资产数据处理
             Db.db.AssetDao().clean();
@@ -195,7 +190,7 @@ public class Wangc implements IApp {
                 Db.db.AssetDao().add(jsonObject1.getString("name"), jsonObject1.getString("icon"), jsonObject1.getInteger("sort"), jsonObject1.getString("id"));
             }
 
-            Log.i("一木记账:doAsync", "资产数据处理完毕");
+            Log.i("记得记账:doAsync", "资产数据处理完毕");
 
             Db.db.BookNameDao().clean();
             for (int i = 0; i < userBook.size(); i++) {
@@ -211,11 +206,11 @@ public class Wangc implements IApp {
                 Db.db.BookNameDao().add(bookName, icon, bid);
             }
 
-            Log.i("一木记账:doAsync", "账本数据处理完毕");
+            Log.i("记得记账:doAsync", "账本数据处理完毕");
 
             if (!userBookList.contains(BookNames.getDefault())) {
                 BookNames.change(userBookList.get(0));
-                Log.i("一木记账:doAsync", "默认账本未找到替换成 -> " + userBookList.get(0));
+                Log.i("记得记账:doAsync", "默认账本未找到替换成 -> " + userBookList.get(0));
             }
 
             HandlerUtil.send(mHandler, 0);
@@ -226,47 +221,71 @@ public class Wangc implements IApp {
 
     @Override
     public void asyncDataAfter(Context context, Bundle extData, int type) {
-        // Toaster.show("收到一木记账数据！正在后台同步中...");
+        // Toaster.show("收到记得记账数据！正在后台同步中...");
         if (type == BROADCAST_ASYNC) {
             doAsync(extData);
         }
-        RootUtils.exec(new String[]{"am force-stop com.wangc.bill"});
+        RootUtils.exec(new String[]{"am force-stop com.weimu.remember.bookkeeping"});
 
     }
 
 
     public String getQianJi(BillInfo billInfo) {
-        String url;
-        if (billInfo.getType().equals(BillInfo.TYPE_TRANSFER_ACCOUNTS)) {
-            url = "yimu://api/transfer?&money=" + billInfo.getMoney();
-        } else {
-            url = "yimu://api/addbill?&money=" + billInfo.getMoney();
-            String childCategory = billInfo.getCateName();
-            String parentCategory = Db.db.CategoryDao().getParentCategory(billInfo).join();
-            if (childCategory.equals(parentCategory)) {
-                url += "&parentCategory=" + childCategory;
-            } else {
-                url += "&parentCategory=" + parentCategory + "&childCategory=" + childCategory;
-            }
-        }
 
+        String url = "qianji://publicapi/addbill?&type=" + billInfo.getType(true) + "&money=" + billInfo.getMoney();
+        MMKV mmkv = MMKV.defaultMMKV();
         if (billInfo.getRemark() != null) {
             url += "&remark=" + billInfo.getRemark();
+        }
+        if (billInfo.getReimbursement() && billInfo.getType().equals(BillInfo.TYPE_INCOME)) {
+            url += "&data=" + new String(Base64.encode(billInfo.getExtraData().getBytes(StandardCharsets.UTF_8), Base64.URL_SAFE));
+            if (billInfo.getAccountId1() != null)
+                url += "&accountnameId=" + billInfo.getAccountId1();
+            // String data = new String(Base64.decode(uri.getQueryParameter("data"),Base64.URL_SAFE));
+        }
+
+        //显示钱迹记账结果
+        if (mmkv.getBoolean("show_qianji_result", true)) {
+            url += "&showresult=1";
+        } else {
+            url += "&showresult=0";
+        }
+
+        //懒人模式，自动分类
+        if (mmkv.getBoolean("lazy_mode", true)) {
+            if (!mmkv.getBoolean("need_cate", true)) {
+                return url + "&catechoose=0";
+            } else {
+                return url + "&catechoose=1";
+            }
+
         }
 
         if (billInfo.getTime() != null) {
             url += "&time=" + billInfo.getTime();
         }
 
+        if (billInfo.getCateName() != null) {
+            url += "&catename=" + billInfo.getCateName();
+        }
+        url += "&catechoose=" + billInfo.getCateChoose();
+
+        url += "&catetheme=auto";
+
         if (billInfo.getBookName()!= null && !billInfo.getBookName().equals("默认账本")) {
-            url += "&bookName=" + billInfo.getBookName();
+            url += "&bookname=" + billInfo.getBookName();
         }
 
         if (billInfo.getAccountName() != null && !billInfo.getAccountName().equals("") && !billInfo.getAccountName().equals("无账户")) {
-            url += "&asset=" + billInfo.getAccountName();
+            url += "&accountname=" + billInfo.getAccountName();
         }
-
-        Log.i("一木记账:doAsync", "一木记账URL:" + url);
+        if (billInfo.getAccountName2() != null && !billInfo.getAccountName2().equals("") && !billInfo.getAccountName2().equals("无账户")) {
+            url += "&accountname2=" + billInfo.getAccountName2();
+        }
+        if (billInfo.getFee() != null && !billInfo.getFee().equals("") && !billInfo.getFee().equals("0")) {
+            url += "&fee=" + billInfo.getFee();
+        }
+        Log.i("记得记账:getQianJi", "记得记账URL:" + url);
         return url;
     }
 
@@ -274,8 +293,8 @@ public class Wangc implements IApp {
     @Override
     public String getAsyncDesc(Context context) {
         if (AppStatus.xposedActive(context)) {
-            return context.getResources().getString(R.string.qianji_async_desc).replaceAll("钱迹", "一木记账");
+            return context.getResources().getString(R.string.qianji_async_desc).replaceAll("钱迹", "记得记账");
         }
-        return context.getResources().getString(R.string.qianji_async_no_support).replaceAll("钱迹", "一木记账");
+        return context.getResources().getString(R.string.qianji_async_no_support).replaceAll("钱迹", "记得记账");
     }
 }
