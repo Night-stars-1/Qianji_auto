@@ -81,7 +81,7 @@ public class Wangc implements IApp {
                     }
 
                     //TODO 4.0新增：多币种记账支持，此处预留修改位。
-                    Toaster.show(String.format(context.getString(R.string.book_success), billInfo.getMoney()));
+                    //Toaster.show(String.format(context.getString(R.string.book_success), billInfo.getMoney()));
                 }
             }
         };

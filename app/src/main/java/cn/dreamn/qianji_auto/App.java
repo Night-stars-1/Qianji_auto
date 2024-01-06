@@ -131,6 +131,7 @@ public class App extends Application {
 
     private void initToast() {  // 初始化 Toast 框架
         Toaster.init(this);
+        Toaster.setView(R.layout.toast_custom_view);
         Toaster.setGravity(Gravity.BOTTOM, 0, 20);
     }
 

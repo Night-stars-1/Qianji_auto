@@ -20,9 +20,12 @@ package cn.dreamn.qianji_auto.data.database.Dao;
 import androidx.room.Dao;
 import androidx.room.Query;
 
+import com.hjq.toast.Toaster;
+
 import java.util.concurrent.CompletableFuture;
 
 import cn.dreamn.qianji_auto.bills.BillInfo;
+import cn.dreamn.qianji_auto.core.hook.Utils;
 import cn.dreamn.qianji_auto.data.database.Db;
 import cn.dreamn.qianji_auto.data.database.Table.Category;
 import cn.dreamn.qianji_auto.utils.runUtils.Log;
@@ -63,15 +66,15 @@ public interface CategoryDao {
 
     default CompletableFuture<String> getParentCategory(BillInfo billInfo) {
         return CompletableFuture.supplyAsync(() -> {
-            String bookId = Db.db.BookNameDao().get(billInfo.getBookName())[0].book_id;
-            String parentId = getByName(billInfo.getCateName(), billInfo.getType(), bookId)[0].parent_id;
-            Category[] parentData = get(parentId);
-            if (parentData.length > 0) {
+            try {
+                String bookId = Db.db.BookNameDao().get(billInfo.getBookName())[0].book_id;
+                String parentId = getByName(billInfo.getCateName(), billInfo.getType(), bookId)[0].parent_id;
+                Category[] parentData = get(parentId);
                 return parentData[0].name;
-            } else {
+            } catch (Exception e) {
+                Toaster.show("获取父类失败，请检测账本是否设置正确");
                 return billInfo.getCateName();
             }
-
         });
     }
 }

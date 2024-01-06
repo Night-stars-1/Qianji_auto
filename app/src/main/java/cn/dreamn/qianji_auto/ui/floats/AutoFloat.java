@@ -49,7 +49,9 @@ import com.afollestad.materialdialogs.list.DialogListExtKt;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.android.material.textfield.TextInputEditText;
+import com.hjq.toast.ToastParams;
 import com.hjq.toast.Toaster;
+import com.hjq.toast.style.LocationToastStyle;
 import com.tencent.mmkv.MMKV;
 
 import net.ankio.timepicker.listener.OnTimeSelectListener;
@@ -330,9 +332,13 @@ public class AutoFloat {
 
         });
         button_next.setOnClickListener(v -> {
-            Toaster.setGravity(Gravity.TOP);
+            //Toaster.setGravity(Gravity.TOP);
             if (billInfo2.getType().equals(BillInfo.TYPE_INCOME) && billInfo2.getReimbursement() && (reiJsonHash == null || reiJsonHash.size() == 0)) {
-                Toaster.show("报销的账单不允许为空");
+                ToastParams params = new ToastParams();
+                params.text = "报销的账单不允许为空";
+                params.style = new LocationToastStyle(Toaster.getStyle(), Gravity.TOP);
+                Toaster.show(params);
+                //Toaster.show("报销的账单不允许为空");
                 return;
             }
 
@@ -426,8 +432,12 @@ public class AutoFloat {
                     dialog2.cornerRadius(15f, null);
                     dialog2.show();
                 } else {
-                    Toaster.setGravity(Gravity.TOP);
-                    Toaster.show("前往同步待记录账单");
+                    //Toaster.setGravity(Gravity.TOP);
+                    ToastParams params = new ToastParams();
+                    params.text = "前往同步待记录账单";
+                    params.style = new LocationToastStyle(Toaster.getStyle(), Gravity.TOP);
+                    Toaster.show(params);
+                    //Toaster.show("前往同步待记录账单");
                     AppManager.Async(context, AppBroadcast.BROADCAST_GET_REI);
                 }
             }
@@ -707,8 +717,12 @@ public class AutoFloat {
                         String json = bundle.getString("data");
                         JSONObject jsonObject = JSONObject.parseObject(json);
                         reiJsonArray = jsonObject.getJSONArray("bill");
-                        Toaster.setGravity(Gravity.TOP);
-                        Toaster.show("已同步报销账单数据！");
+                        //Toaster.setGravity(Gravity.TOP);
+                        ToastParams params = new ToastParams();
+                        params.text = "已同步报销账单数据！";
+                        params.style = new LocationToastStyle(Toaster.getStyle(), Gravity.TOP);
+                        Toaster.show(params);
+                        //Toaster.show("已同步报销账单数据！");
                         ll_bill.callOnClick();
                     }
                 };

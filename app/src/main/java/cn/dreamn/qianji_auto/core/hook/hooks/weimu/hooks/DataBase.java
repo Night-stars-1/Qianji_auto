@@ -24,7 +24,14 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Base64;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.room.RoomDatabase;
@@ -34,6 +41,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.tencent.mmkv.MMKV;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +106,9 @@ public class DataBase {
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                boolean status;
+                if (hooked[0]) return;
+                hooked[0] = true;
                 Activity activity = (Activity) param.thisObject;
                 Intent intent = (Intent) XposedHelpers.callMethod(activity, "getIntent");
                 if (intent != null) {
@@ -119,15 +130,13 @@ public class DataBase {
                     if (path.equals("/addbill")) {
                         switch (type) {
                             case "0":
-                                /**
                                 utils.log("金额: "+money, false);
                                 utils.log("账单分类: "+cateName, false);
                                 utils.log("备注信息: "+remark, false);
                                 utils.log("账单时间: "+time, false);
                                 utils.log("账本名称: "+bookName, false);
-                                utils.log("资产名称: "+accountName, false);
-                                 */
-                                boolean status = dbHelper[0].addBill(money, remark, time, cateName, bookName, accountName, 8);
+                                utils.log("资产名称: "+accountName2, false);
+                                status = dbHelper[0].addBill(money, remark, time, cateName, bookName, accountName, accountName2, fee, 8);
                                 if (status) {
                                     Toast.makeText(utils.getContext(), "支出记账成功", Toast.LENGTH_LONG).show();
                                 } else {
@@ -135,20 +144,22 @@ public class DataBase {
                                 }
                                 break;
                             case "1":
-                                /*
+                                /**
                                 utils.log("金额: "+money, false);
                                 utils.log("账单备注信息: "+remark, false);
                                 utils.log("账单时间: "+time, false);
                                 utils.log("账本名称: "+bookName, false);
                                 utils.log("资产名称: "+accountName, false);
                                  */
-                                status = dbHelper[0].addBill(money, remark, time, cateName, bookName, accountName, 9);
+                                status = dbHelper[0].addBill(money, remark, time, cateName, bookName, accountName, accountName2, fee, 9);
                                 if (status) {
                                     Toast.makeText(utils.getContext(), "收入记账成功", Toast.LENGTH_LONG).show();
                                 } else {
                                     Toast.makeText(utils.getContext(), "收入记账失败", Toast.LENGTH_LONG).show();
-                                }                                break;
+                                }
+                                break;
                             case "2":
+                                /**
                                 utils.log("金额: "+money, false);
                                 utils.log("账单备注信息: "+remark, false);
                                 utils.log("账单时间: "+time, false);
@@ -156,7 +167,13 @@ public class DataBase {
                                 utils.log("转出账户: "+accountName, false);
                                 utils.log("转入账户: "+accountName2, false);
                                 utils.log("手续费: "+fee, false);
-                                Toast.makeText(utils.getContext(), "暂未支持转账", Toast.LENGTH_LONG).show();
+                                 */
+                                status = dbHelper[0].addBill(money, remark, time, cateName, bookName, accountName, accountName2, fee, 2);
+                                if (status) {
+                                    Toast.makeText(utils.getContext(), "转账记账成功", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(utils.getContext(), "转账记账失败", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                             case "3":
                                 utils.log("金额: "+money, false);

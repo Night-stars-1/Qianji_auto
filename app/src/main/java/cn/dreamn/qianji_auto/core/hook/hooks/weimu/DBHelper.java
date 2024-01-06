@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
@@ -242,27 +243,56 @@ public class DBHelper {
         if (!db.isOpen()) {
             openDb();
         }
-        Cursor cursor = db.rawQuery("select * from book where name= ?", new String[]{bookName});
-        String bookId = "-1";
+        Cursor cursor = db.rawQuery("select * from book where name= ? LIMIT 1", new String[]{bookName});
+        String bookId = "";
         while (cursor.moveToNext()) {
             bookId = cursor.getString(cursor.getColumnIndex("id"));
         }
         cursor.close();
+        if (bookId.isEmpty()) {
+            String FilesDir = utils.getContext().getFilesDir().getPath();
+            String userInfoJson = readJsonFromAsset( FilesDir + "/user/" + UserId + "/userSettings.json");
+            JSONObject userInfoObject = JSONObject.parseObject(userInfoJson);
+            bookId = userInfoObject.getString("bookid");
+        }
         return bookId;
     }
 
     private String getCategoryId(String cateName, int type) {
+        String categoryId = "";
         if (!db.isOpen()) {
             openDb();
         }
         // type 1:收入 2:支出
         Cursor cursor = db.rawQuery("SELECT * FROM category WHERE name = ? AND type = ? LIMIT 1", new String[]{cateName, String.valueOf(type)});
-        String categoryId = "-1";
         while (cursor.moveToNext()) {
             categoryId = cursor.getString(cursor.getColumnIndex("id"));
         }
         cursor.close();
+        if (type == 0) {
+            categoryId = "";
+        }
         return categoryId;
+    }
+
+    /**
+     * 获取资产信息
+     *
+     * @return 资产信息
+     */
+    @SuppressLint("Range")
+    public String getAssetId(String accountName) {
+        String assetId = "";
+        if (!db.isOpen()) {
+            openDb();
+        }
+        Cursor cursor = db.rawQuery("select * from capital_basic where name = ? LIMIT 1", new String[]{accountName});
+        JSONArray jsonArray = new JSONArray();
+        while (cursor.moveToNext()) {
+            assetId = cursor.getString(cursor.getColumnIndex("id")); // 金额
+        }
+        cursor.close();
+        return assetId;
     }
 
     private static String generateRandomString(int length) {
@@ -278,7 +308,7 @@ public class DBHelper {
         return sb.toString();
     }
 
-    public boolean addBill(String money, String remark, String time, String cateName, String bookName, String accountName, Integer type) {
+    public boolean addBill(String money, String remark, String time, String cateName, String bookName, String accountName, String accountName2, String fee, Integer type) {
         boolean status;
         if (!db.isOpen()) {
             openDb();
@@ -297,10 +327,10 @@ public class DBHelper {
             values.put("type", type); // 8:支出 9:收入
             values.put("money", (int) Double.parseDouble(money)*100);
             values.put("book_id", getBookId(bookName)); // 账本id
-            values.put("category_id", getCategoryId(cateName, type==8?2:1)); // 分类id
-            values.put("to_capital_id", ""); // 账户id
-            values.put("from_capital_id", ""); // 账户id
-            values.put("fee", "0");
+            values.put("category_id", getCategoryId(cateName, type==8?2:type==9?1:0)); // 分类id
+            values.put("to_capital_id", getAssetId(accountName2)); // 账户id
+            values.put("from_capital_id", getAssetId(accountName)); // 账户id
+            values.put("fee", (int) Double.parseDouble(fee)*100);
             //values.put("seq_id", "seq_id");
             values.put("sync_status", "1");
             values.put("deleted", "0");

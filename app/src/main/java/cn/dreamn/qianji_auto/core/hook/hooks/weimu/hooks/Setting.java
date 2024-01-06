@@ -1,6 +1,5 @@
-package cn.dreamn.qianji_auto.core.hook.hooks.wangc.hooks;
+package cn.dreamn.qianji_auto.core.hook.hooks.weimu.hooks;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -9,25 +8,17 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import java.lang.reflect.Field;
-
 import cn.dreamn.qianji_auto.BuildConfig;
 import cn.dreamn.qianji_auto.core.hook.Utils;
-import cn.dreamn.qianji_auto.ui.theme.ThemeManager;
-import cn.dreamn.qianji_auto.ui.utils.ScreenUtils;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
@@ -52,15 +43,15 @@ public class Setting {
             }
         };
 
-        String cls ="com.wangc.bill.Fragment.MyFragment";
-        String method = "onCreateView";
+        String cls ="com.weimu.remember.bookkeeping.MainActivity";
+        String method = "onCreate";
 
         try {
-            //utils.log("一木记账 Seting.init Hook<" + cls + "." + method + ">");
+            utils.log("记得记账 Seting.init Hook<" + cls + "." + method + ">");
             XposedHelpers.findAndHookMethod(cls, mAppClassLoader, method, LayoutInflater.class, ViewGroup.class, android.os.Bundle.class, methodHook);
 
         } catch (Exception e) {
-            utils.log("一木记账 Seting.init Hook <" + cls + "." + method + "> HookError " + e);
+            utils.log("记得记账 Seting.init Hook <" + cls + "." + method + "> HookError " + e);
         }
     }
 

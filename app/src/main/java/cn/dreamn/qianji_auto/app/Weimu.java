@@ -20,6 +20,7 @@ import com.tencent.mmkv.MMKV;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cn.dreamn.qianji_auto.R;
@@ -67,6 +68,7 @@ public class Weimu implements IApp {
             public void handleMessage(@NonNull Message msg) {
                 if (msg.what == 0) {
                     time = System.currentTimeMillis();
+                    RootUtils.exec(new String[]{"am force-stop com.weimu.remember.bookkeeping"});
                     Intent intent = new Intent();
                     intent.setClassName("com.weimu.remember.bookkeeping", "com.alipay.sdk.app.AlipayResultActivity");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -279,11 +281,15 @@ public class Weimu implements IApp {
         if (billInfo.getAccountName() != null && !billInfo.getAccountName().equals("") && !billInfo.getAccountName().equals("无账户")) {
             url += "&accountname=" + billInfo.getAccountName();
         }
-        if (billInfo.getAccountName2() != null && !billInfo.getAccountName2().equals("") && !billInfo.getAccountName2().equals("无账户")) {
+        if (billInfo.getAccountName2() != null && !billInfo.getAccountName2().equals("") && !billInfo.getAccountName2().equals("无账户") && Arrays.asList("2", "3").contains(billInfo.getType(true))) {
             url += "&accountname2=" + billInfo.getAccountName2();
+        } else {
+            url += "&accountname2=";
         }
         if (billInfo.getFee() != null && !billInfo.getFee().equals("") && !billInfo.getFee().equals("0")) {
             url += "&fee=" + billInfo.getFee();
+        } else {
+            url += "&fee=0";
         }
         Log.i("记得记账:getQianJi", "记得记账URL:" + url);
         return url;

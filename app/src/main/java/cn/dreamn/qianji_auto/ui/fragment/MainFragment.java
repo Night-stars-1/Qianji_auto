@@ -37,7 +37,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.hjq.toast.ToastParams;
 import com.hjq.toast.Toaster;
+import com.hjq.toast.style.LocationToastStyle;
 import com.tencent.mmkv.MMKV;
 import com.xuexiang.xpage.annotation.Page;
 import com.xuexiang.xpage.enums.CoreAnim;
@@ -430,8 +432,11 @@ public class MainFragment extends BaseFragment {
                 @Override
                 public void sure() {
                     loadingDialog.show();
-                    Toaster.setGravity(Gravity.TOP);
-                    Toaster.show("前往同步账单数据");
+                    //Toaster.setGravity(Gravity.TOP);
+                    ToastParams params = new ToastParams();
+                    params.text = "前往同步账单数据";
+                    params.style = new LocationToastStyle(Toaster.getStyle(), Gravity.TOP);
+                    Toaster.show(params);
                     AppManager.Async(getContext(), AppBroadcast.BROADCAST_GET_YEAR);
                 }
             });
