@@ -39,11 +39,11 @@ public class UpdateUtils {
         };
         try {
             checkAndroidUpdate(context, handler);
-            checkXposedRegularUpdate(context);//不需要反馈给用户
+            //checkXposedRegularUpdate(context);//不需要反馈给用户
 
         } catch (Throwable e) {
-            Log.i("网络访问发生了错误！" + e.toString());
-            e.printStackTrace();
+            Log.i("网络访问发生了错误！" + e);
+            //e.printStackTrace();
         }
     }
 

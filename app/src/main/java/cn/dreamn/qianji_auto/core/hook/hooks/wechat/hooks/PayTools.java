@@ -39,7 +39,7 @@ public class PayTools {
                     return;
                 }
                 String data = get.invoke(param.args[0]).toString();
-                utils.log("设置数据：" + data, true);
+                //utils.log("设置数据：" + data, true);
 
                 String[] empty = new String[]{"支付", "使用", "请", "待", "识别", "失败"};
                 String[] cards = new String[]{"卡(", "零钱"};
@@ -52,13 +52,13 @@ public class PayTools {
                 if (inArray(data, cards, false)) {
                     //支付账户
                     utils.writeData("cache_wechat_paytool", data);
-                    utils.log("识别的账户名：" + data);
+                    //utils.log("识别的账户名：" + data);
                 } else if (inArray(data, money, true)) {
-                    utils.log("识别的金额：" + data);
+                    //utils.log("识别的金额：" + data);
                     //金额
                     utils.writeData("cache_wechat_payMoney", data);
                 } else {
-                    utils.log("识别的商户：" + data);
+                    //utils.log("识别的商户：" + data);
                     //转账人
                     utils.writeData("cache_wechat_payUser", data);
                 }

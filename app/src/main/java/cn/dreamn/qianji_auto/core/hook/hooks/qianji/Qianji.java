@@ -239,6 +239,7 @@ public class Qianji extends hookBase {
 return null;
 
     }
+
     @Override
     public void hookLoadPackage() throws ClassNotFoundException {
 

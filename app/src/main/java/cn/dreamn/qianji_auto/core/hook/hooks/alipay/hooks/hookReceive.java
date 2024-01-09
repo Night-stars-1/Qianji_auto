@@ -66,31 +66,55 @@ public class hookReceive {
         if (!jsonObject1.containsKey("templateType")) return;
         if (!jsonObject1.containsKey("templateName")) return;
         if (!jsonObject1.containsKey("title")) return;
-        if (!jsonObject1.containsKey("content")) return;
+        if (!jsonObject1.containsKey("extraInfo")) return;
 
         utils.log("-------消息开始解析-------");
+
         String title = jsonObject1.getString("title");
         String templateName = jsonObject1.getString("templateName");
         if (title.equals("其他")) title = templateName;
+        JSONObject content = new JSONObject();
+        JSONObject extraInfo = jsonObject1.getJSONObject("extraInfo");
+        if (extraInfo.containsKey("extraInfo") && extraInfo.getJSONObject("extraInfo").containsKey("sceneName")) {
+            content.put("sceneName", extraInfo.getJSONObject("extraInfo").getString("sceneName"));
+        }
+        for (String key : extraInfo.keySet()) {
+            if (!key.startsWith("assistName")) continue;
+            if (extraInfo.getString(key).isEmpty()) continue;
+            content.put(extraInfo.getString(key), extraInfo.getString(key.replace("assistName", "assistMsg")));
+        }
 
+        content.put("title", title);
+        utils.send(content);
+        /*
         if (jsonObject1.getString("templateType").equals("BN")) {
             JSONObject content = jsonObject1.getJSONObject("content");
-           /* content.put("alipay_cache_shopremark", utils.readData("alipay_cache_shopremark", true));
+
+            content.put("alipay_cache_shopremark", utils.readData("alipay_cache_shopremark", true));
             content.put("alipay_cache_money", utils.readData("alipay_cache_money", true));
             content.put("alipay_cache_payTool", utils.readData("alipay_cache_payTool", true));
-           */
+
             content.put("title", title);
             utils.send(content);
         } else if (jsonObject1.getString("templateType").equals("S")) {
-            JSONObject content = jsonObject1.getJSONObject("extraInfo");
-            content.put("extra", jsonObject1.getString("content"));
-          /*  content.put("alipay_cache_shopremark", utils.readData("alipay_cache_shopremark"));
+            JSONObject content = new JSONObject();
+            JSONObject extraInfo = jsonObject1.getJSONObject("extraInfo");
+            for (String key : extraInfo.keySet()) {
+                if (!key.startsWith("assistName")) continue;
+                if (extraInfo.getString(key).isEmpty()) continue;
+                content.put(extraInfo.getString(key), extraInfo.getString(key.replace("assistName", "assistMsg")));
+            }
+
+            content.put("content", jsonObject1.getString("content"));
+            content.put("alipay_cache_shopremark", utils.readData("alipay_cache_shopremark"));
             content.put("alipay_cache_money", utils.readData("alipay_cache_money"));
             content.put("alipay_cache_payTool", utils.readData("alipay_cache_payTool"));
-            */
+
             content.put("title", title);
+            content.put("homePageTitle", jsonObject1.getString("homePageTitle"));
             utils.send(content);
         }
+        */
 
     }
 }

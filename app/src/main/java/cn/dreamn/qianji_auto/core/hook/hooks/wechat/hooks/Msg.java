@@ -38,6 +38,9 @@ public class Msg {
 
 
             @Override
+            /*
+             * 重写只保留有效内容
+             */
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 try {
                     ContentValues contentValues = (ContentValues) param.args[2];
@@ -45,27 +48,33 @@ public class Msg {
                     String arg = (String) param.args[1];
                     if (utils.isDebug())
                         utils.log("微信数据：" + contentValues.toString() + " table:" + tableName + " arg:" + arg);
-                    if (!tableName.equals("message") || TextUtils.isEmpty(tableName)) {
+                    if (!tableName.equals("message") || tableName.isEmpty()) {
                         return;
                     }
                     Integer type = contentValues.getAsInteger("type");
-                    if (null == type) {
+                    if (type == null) {
                         return;
                     }
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("isSend", contentValues.getAsInteger("isSend"));
-                    jsonObject.put("status", contentValues.getAsInteger("status"));
-                    jsonObject.put("talker", contentValues.getAsInteger("talker"));
+                    //jsonObject.put("isSend", contentValues.getAsInteger("isSend"));
+                    //jsonObject.put("status", contentValues.getAsInteger("status"));
+                    //jsonObject.put("talker", contentValues.getAsInteger("talker"));
 
                     XmlToJson xmlToJson = new XmlToJson.Builder(contentValues.getAsString("content")).build();
                     String xml = xmlToJson.toString();
-
-
-                    jsonObject.put("content", JSONObject.parseObject(xml));
+                    JSONObject data = JSONObject.parseObject(xml);
+                    //jsonObject.put("content", JSONObject.parseObject(xml));
+                    if (!data.isEmpty() && data.containsKey("msg") && data.getJSONObject("msg").containsKey("appinfo")) {
+                        JSONObject msg = data.getJSONObject("msg");
+                        jsonObject.put("name", msg.getJSONObject("appinfo").getString("appname"));
+                        jsonObject.put("msg_title", msg.getJSONObject("appmsg").getJSONObject("mmreader").getJSONObject("category").getJSONObject("item").getString("title"));
+                        jsonObject.put("time", msg.getJSONObject("appmsg").getJSONObject("mmreader").getJSONObject("category").getJSONObject("item").getString("pub_time"));
+                        jsonObject.put("content", msg.getJSONObject("appmsg").getString("des"));
+                    }
                     jsonObject.put("cache_money", utils.readData("cache_wechat_payMoney"));
                     jsonObject.put("cache_user", utils.readData("cache_wechat_payUser"));
                     jsonObject.put("cache_user2", utils.readData("cache_userName"));
-                    jsonObject.put("cache_paytools", utils.readData("cache_wechat_paytool"));
+                    //jsonObject.put("cache_paytools", utils.readData("cache_wechat_paytool"));
                     //转账消息
                     if (type == 419430449) {
                         jsonObject.put("title", "转账消息");

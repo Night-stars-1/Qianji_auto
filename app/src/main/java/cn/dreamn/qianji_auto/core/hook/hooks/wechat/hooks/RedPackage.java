@@ -17,53 +17,35 @@
 
 package cn.dreamn.qianji_auto.core.hook.hooks.wechat.hooks;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import cn.dreamn.qianji_auto.core.hook.Utils;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 
 public class RedPackage {
-    public static void init(Utils utils) {
+    public static void init(Utils utils, JSONArray jsonArray) {
         ClassLoader mAppClassLoader = utils.getClassLoader();
         try {
-            hook801_802(mAppClassLoader, utils);
+            String cls =jsonArray.getString(0);
+            String method = jsonArray.getString(1);
+            String qVar = jsonArray.getString(2);
+            Class<?> qVar2 = XposedHelpers.findClass(qVar, mAppClassLoader);
+            XposedHelpers.findAndHookMethod(cls, mAppClassLoader, method, qVar2, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+
+                    setParam(param, utils, qVar2);
+                }
+            });
         } catch (Error | Exception e) {
-            try {
-                hookmin800(mAppClassLoader, utils);
-            } catch (Error | Exception e2) {
-                utils.log("hook红包失败！" + e2.toString());
-            }
+            utils.log("hook红包失败！" + e);
         }
-    }
-
-    public static void hook801_802(ClassLoader mAppClassLoader, Utils utils) {
-        Class<?> LuckyMoneyDetailUI = XposedHelpers.findClass("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI", mAppClassLoader);
-        Class<?> qVar = XposedHelpers.findClass("com.tencent.mm.plugin.luckymoney.model.q", mAppClassLoader);
-
-        XposedHelpers.findAndHookMethod(LuckyMoneyDetailUI, "a", qVar, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                setParam(param, utils, qVar);
-            }
-        });
-    }
-
-    public static void hookmin800(ClassLoader mAppClassLoader, Utils utils) {
-        Class<?> LuckyMoneyDetailUI = XposedHelpers.findClass("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI", mAppClassLoader);
-        Class<?> qVar = XposedHelpers.findClass("com.tencent.mm.plugin.luckymoney.model.l", mAppClassLoader);
-
-        XposedHelpers.findAndHookMethod(LuckyMoneyDetailUI, "a", qVar, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                setParam(param, utils, qVar);
-            }
-        });
     }
 
     private static void setParam(XC_MethodHook.MethodHookParam param, Utils utils, Class<?> qVar) throws IllegalAccessException, NoSuchFieldException {
@@ -90,7 +72,7 @@ public class RedPackage {
         utils.log(log.toString());
 
         String json = utils.readData("red");
-        if (json.equals("")) {
+        if (json.isEmpty()) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("money", "AcI");
             jsonObject.put("total", "AZd");
@@ -117,20 +99,20 @@ public class RedPackage {
         Field groups = qVar.getDeclaredField(qVarGroup);
         Field total = qVar.getDeclaredField(qVarTotal);
 
-        double m = Integer.parseInt(money.get(object).toString()) / 100.0d;
-        double t = Integer.parseInt(total.get(object).toString()) / 100.0d;
+        double m = Integer.parseInt(Objects.requireNonNull(money.get(object)).toString()) / 100.0d;
+        double t = Integer.parseInt(Objects.requireNonNull(total.get(object)).toString()) / 100.0d;
         if (m == 0)//金额为0直接忽略
             return;
-        String remarkStr = remark.get(object).toString();
-        if (remarkStr.equals("")) {
+        String remarkStr = Objects.requireNonNull(remark.get(object)).toString();
+        if (remarkStr.isEmpty()) {
             remarkStr = "大吉大利，恭喜发财";
         }
-        String n = groups.get(object).toString();
+        String n = Objects.requireNonNull(groups.get(object)).toString();
         String isGroup = (n.equals("1")) ? "false" : "true";
         //增加 isGroup
         String data = "money=%s,remark=%s,status=%s,shop=%s,isGroup=%s,numbers=%s,total=%s,title=微信收到红包";
 
-        data = String.format(data, m, remarkStr, status.get(object).toString(), shopAccount.get(object).toString(), isGroup, n, t);
+        data = String.format(data, m, remarkStr, Objects.requireNonNull(status.get(object)), Objects.requireNonNull(shopAccount.get(object)), isGroup, n, t);
 
         // utils.log("红包数据：" + data);
 

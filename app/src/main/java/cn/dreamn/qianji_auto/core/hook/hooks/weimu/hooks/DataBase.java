@@ -135,7 +135,7 @@ public class DataBase {
                                 utils.log("备注信息: "+remark, false);
                                 utils.log("账单时间: "+time, false);
                                 utils.log("账本名称: "+bookName, false);
-                                utils.log("资产名称: "+accountName2, false);
+                                utils.log("资产名称: "+accountName, false);
                                 status = dbHelper[0].addBill(money, remark, time, cateName, bookName, accountName, accountName2, fee, 8);
                                 if (status) {
                                     Toast.makeText(utils.getContext(), "支出记账成功", Toast.LENGTH_LONG).show();
