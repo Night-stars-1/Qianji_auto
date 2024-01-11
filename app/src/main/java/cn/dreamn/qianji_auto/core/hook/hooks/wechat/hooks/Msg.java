@@ -63,7 +63,6 @@ public class Msg {
                     XmlToJson xmlToJson = new XmlToJson.Builder(contentValues.getAsString("content")).build();
                     String xml = xmlToJson.toString();
                     JSONObject data = JSONObject.parseObject(xml);
-                    utils.log(data.toJSONString());
                     //jsonObject.put("content", JSONObject.parseObject(xml));
                     if (!data.isEmpty() && data.containsKey("msg") && data.getJSONObject("msg").containsKey("appinfo")) {
                         JSONObject msg = data.getJSONObject("msg");
@@ -83,6 +82,7 @@ public class Msg {
                         JSONObject wcpayInfo = msg.getJSONObject("appmsg").getJSONObject("wcpayinfo");
                         jsonObject.put("money", wcpayInfo.getString("feedesc"));
                         jsonObject.put("pay_memo", wcpayInfo.getString("pay_memo"));
+                        jsonObject.put("time", wcpayInfo.getString("invalidtime"));
                         jsonObject.put("title", "转账消息");
                         utils.send(jsonObject);
                     } else if (type == 436207665) {
