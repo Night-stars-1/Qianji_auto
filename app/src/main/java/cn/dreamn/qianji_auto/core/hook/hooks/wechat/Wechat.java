@@ -118,7 +118,7 @@ public class Wechat extends hookBase {
 
                     for (Method method : m) {
                         Class<?>[] parameterTypes = method.getParameterTypes();
-                        if (parameterTypes.length == 1 && parameterTypes[0].getName().startsWith("com.tencent.mm.plugin.luckymoney.model.a")) {
+                        if (parameterTypes.length == 1 && parameterTypes[0].getName().startsWith("com.tencent.mm.plugin.luckymoney.model")) {
                             //utils.log("Xposed---parameterTypes", parameterTypes[0].getName());
                             JSONArray jsonArray = new JSONArray();
                             jsonArray.add("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI");

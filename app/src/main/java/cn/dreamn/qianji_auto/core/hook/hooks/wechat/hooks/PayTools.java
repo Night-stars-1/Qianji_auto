@@ -54,7 +54,7 @@ public class PayTools {
                     utils.writeData("cache_wechat_paytool", data);
                     //utils.log("识别的账户名：" + data);
                 } else if (inArray(data, money, true)) {
-                    //utils.log("识别的金额：" + data);
+                    utils.log("识别的金额：" + data);
                     //金额
                     utils.writeData("cache_wechat_payMoney", data);
                 } else {

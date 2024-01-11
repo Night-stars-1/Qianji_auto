@@ -16,19 +16,19 @@ public class QQ extends hookBase {
         try {
             Msg.init(utils);
         } catch (Throwable e) {
-            utils.log("hook Msg 出错！" + e.toString());
+            utils.log("hook Msg 出错！" + e);
         }
         try {
             if (utils.isDebug()) {
                 QLog.init(utils);
             }
         } catch (Throwable e) {
-            utils.log("hook QLog 出错！" + e.toString());
+            utils.log("hook QLog 出错！" + e);
         }
         try {
             Setting.init(utils);
         } catch (Throwable e) {
-            utils.log("hook Setting 出错！" + e.toString());
+            utils.log("hook Setting 出错！" + e);
         }
     }
 

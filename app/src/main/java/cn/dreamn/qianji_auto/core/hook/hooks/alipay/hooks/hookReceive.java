@@ -73,19 +73,31 @@ public class hookReceive {
         String title = jsonObject1.getString("title");
         String templateName = jsonObject1.getString("templateName");
         if (title.equals("其他")) title = templateName;
+
         JSONObject content = new JSONObject();
+
+        content.put("title", title);
         JSONObject extraInfo = jsonObject1.getJSONObject("extraInfo");
-        if (extraInfo.containsKey("extraInfo") && extraInfo.getJSONObject("extraInfo").containsKey("sceneName")) {
-            content.put("sceneName", extraInfo.getJSONObject("extraInfo").getString("sceneName"));
-        }
         for (String key : extraInfo.keySet()) {
             if (!key.startsWith("assistName")) continue;
             if (extraInfo.getString(key).isEmpty()) continue;
             content.put(extraInfo.getString(key), extraInfo.getString(key.replace("assistName", "assistMsg")));
         }
+        if (extraInfo.containsKey("sceneExt2")) {
+            content.put("sceneName", extraInfo.getJSONObject("sceneExt2").getString("sceneName"));
+        } else if (extraInfo.containsKey("sceneExt")) {
+            content.put("sceneName", extraInfo.getJSONObject("sceneExt").getString("sceneName"));
+        }
 
-        content.put("title", title);
-        utils.send(content);
+        if (jsonObject1.getString("templateType").equals("BN")) {
+            content.put("type", "支付消息");
+            content.put("money", extraInfo.getJSONObject("content").getString("money"));
+            utils.send(content);
+        } else if (jsonObject1.getString("templateType").equals("S")) {
+            content.put("type", "服务消息");
+            content.put("homePageTitle", jsonObject1.getString("homePageTitle"));
+            utils.send(content);
+        }
         /*
         if (jsonObject1.getString("templateType").equals("BN")) {
             JSONObject content = jsonObject1.getJSONObject("content");

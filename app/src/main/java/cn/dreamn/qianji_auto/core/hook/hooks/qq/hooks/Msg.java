@@ -17,8 +17,11 @@
 
 package cn.dreamn.qianji_auto.core.hook.hooks.qq.hooks;
 
+import android.content.ContentValues;
 import android.content.Context;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,22 +33,29 @@ import de.robv.android.xposed.XposedHelpers;
 public class Msg {
     public static void init(Utils utils) throws ClassNotFoundException {
         ClassLoader mAppClassLoader = utils.getClassLoader();
-        Context mContext = utils.getContext();
-        final Class<?> msg_record_class = mAppClassLoader.loadClass("com.tencent.mobileqq.data.MessageRecord");
-        XposedHelpers.findAndHookMethod("com.tencent.mobileqq.app.MessageHandlerUtils", mAppClassLoader, "a",
-                "com.tencent.common.app.AppInterface",
-                "com.tencent.mobileqq.data.MessageRecord", Boolean.TYPE, new XC_MethodHook() {
+
+        //final Class<?> msg_record_class = mAppClassLoader.loadClass("com.tencent.mobileqq.data.MessageRecord");
+        XposedHelpers.findAndHookMethod(
+                "com.tencent.mobileqq.app.MessageHandlerUtils", // 类名
+                mAppClassLoader, // 类加载器
+                "msgFilter", // 方法名
+                "com.tencent.common.app.AppInterface", // 参数1: AppInterface
+                "com.tencent.mobileqq.data.MessageRecord", // 参数2: MessageRecord
+                boolean.class, // 参数3: boolean
+                new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         String msgtype = XposedHelpers.getObjectField(param.args[1], "msgtype").toString();
+                        utils.log("QQ消息类型：" + msgtype);
                         String s = (String) XposedHelpers.callMethod(param.args[1], "toString");
-                        if (msgtype.equals("-2011")) {
+                        if (msgtype.equals("-1012")) {
+                            utils.log("检验点");
                             byte[] msgData = (byte[]) XposedHelpers.getObjectField(param.args[1], "msgData");
+                            utils.log(Arrays.toString(msgData));
                             String data = new String(msgData).replaceAll("[^0-9a-zA-Z\u4e00-\u9fa5\\s.，,。？“”/:=+-]+", "\n");
                             Pattern p = Pattern.compile("(\r?\n(\\s*\r?\n)+)");
                             Matcher m = p.matcher(data);
                             data = m.replaceAll("\n");
-
 
                             //去重
                             String last = utils.readData("lastQQ");
@@ -55,11 +65,9 @@ public class Msg {
                                 return;
                             }
                             utils.sendString(data);
-                        } else if (utils.isDebug()) {
-                            utils.log(s);
-                            utils.dumpFields(param.args[1], msg_record_class);
                         }
-
+                        utils.log(s);
+                        //utils.dumpFields(param.args[1], msg_record_class);
                     }
                 }
         );

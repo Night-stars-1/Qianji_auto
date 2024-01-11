@@ -27,13 +27,13 @@ import de.robv.android.xposed.XposedHelpers;
 public class QLog {
     public static void init(Utils utils) throws ClassNotFoundException {
         ClassLoader mAppClassLoader = utils.getClassLoader();
-        Context mContext = utils.getContext();
+
         Class<?> QLOG = mAppClassLoader.loadClass("com.tencent.qphone.base.util.QLog");
         //private static void addLogItem(String str, int i, int i2, String str2, byte[] bArr, Throwable th) {
-        XposedHelpers.findAndHookMethod(QLOG, "addLogItem", String.class, int.class, int.class, String.class, byte[].class, Throwable.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(QLOG, "addLogItem", byte.class, String.class, int.class, String.class, Throwable.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                String tag = (String) param.args[0];
+                String tag = (String) param.args[1];
                 String msg = (String) param.args[3];
                 utils.log("QQ日志-" + tag + ":" + msg);
             }

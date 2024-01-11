@@ -56,13 +56,14 @@ public class Msg {
                         return;
                     }
                     JSONObject jsonObject = new JSONObject();
-                    //jsonObject.put("isSend", contentValues.getAsInteger("isSend"));
-                    //jsonObject.put("status", contentValues.getAsInteger("status"));
-                    //jsonObject.put("talker", contentValues.getAsInteger("talker"));
+                    jsonObject.put("isSend", contentValues.getAsInteger("isSend"));
+                    jsonObject.put("status", contentValues.getAsInteger("status"));
+                    jsonObject.put("talker", contentValues.getAsInteger("talker"));
 
                     XmlToJson xmlToJson = new XmlToJson.Builder(contentValues.getAsString("content")).build();
                     String xml = xmlToJson.toString();
                     JSONObject data = JSONObject.parseObject(xml);
+                    utils.log(data.toJSONString());
                     //jsonObject.put("content", JSONObject.parseObject(xml));
                     if (!data.isEmpty() && data.containsKey("msg") && data.getJSONObject("msg").containsKey("appinfo")) {
                         JSONObject msg = data.getJSONObject("msg");
@@ -77,6 +78,11 @@ public class Msg {
                     //jsonObject.put("cache_paytools", utils.readData("cache_wechat_paytool"));
                     //转账消息
                     if (type == 419430449) {
+                        // 收到的wcpayinfo下有payer_username
+                        JSONObject msg = data.getJSONObject("msg");
+                        JSONObject wcpayInfo = msg.getJSONObject("appmsg").getJSONObject("wcpayinfo");
+                        jsonObject.put("money", wcpayInfo.getString("feedesc"));
+                        jsonObject.put("pay_memo", wcpayInfo.getString("pay_memo"));
                         jsonObject.put("title", "转账消息");
                         utils.send(jsonObject);
                     } else if (type == 436207665) {
