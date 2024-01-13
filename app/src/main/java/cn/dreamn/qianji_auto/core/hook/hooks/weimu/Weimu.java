@@ -98,8 +98,8 @@ public class Weimu extends hookBase {
             }
         }
 
-        Toast.makeText(utils.getContext(),"一羽记账版本："+utils.getVerName()+"("+utils.getVerCode()+")未适配，尝试适配！",Toast.LENGTH_LONG).show();
-        utils.log("一羽记账版本："+utils.getVerName()+"("+utils.getVerCode()+")未适配，尝试适配！");
+        Toast.makeText(utils.getContext(),"记得记账版本："+utils.getVerName()+"("+utils.getVerCode()+")未适配，尝试适配！",Toast.LENGTH_LONG).show();
+        utils.log("记得记账版本："+utils.getVerName()+"("+utils.getVerCode()+")未适配，尝试适配！");
         attach();
         new Thread(){
             @Override
@@ -131,8 +131,8 @@ public class Weimu extends hookBase {
 
                 runOnUiThread(() -> {
                     if(jsonObject.containsKey("DataBasePath")){
-                        Toast.makeText(utils.getContext(),"一羽记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配成功！",Toast.LENGTH_LONG).show();
-                        utils.log("一羽记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配成功！");
+                        Toast.makeText(utils.getContext(),"记得记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配成功！",Toast.LENGTH_LONG).show();
+                        utils.log("记得记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配成功！");
                         utils.writeData(key,jsonObject.toString());
                         try {
                             Thread.sleep(2000);
@@ -142,8 +142,8 @@ public class Weimu extends hookBase {
                         }
 
                     }else{
-                        Toast.makeText(utils.getContext(),"一羽记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配失败！",Toast.LENGTH_LONG).show();
-                        utils.log("一羽记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配失败！");
+                        Toast.makeText(utils.getContext(),"记得记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配失败！",Toast.LENGTH_LONG).show();
+                        utils.log("记得记账版本："+utils.getVerName()+"("+utils.getVerCode()+")适配失败！");
                         Log.e("Xposed",jsonObject.toJSONString());
                     }
                 });

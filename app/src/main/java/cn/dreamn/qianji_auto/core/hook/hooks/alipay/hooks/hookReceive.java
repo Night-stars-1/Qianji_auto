@@ -48,7 +48,14 @@ public class hookReceive {
                     try {
                         analyze(utils, data);
                     } catch (Exception e2) {
-                        utils.log("AlipayErr" + e2.toString(), false);
+                        try {
+                            JSONArray jsonArray = JSONArray.parseArray(data);
+                            for (int i = 0; i < jsonArray.size(); i++) {
+                                analyze(utils, jsonArray.get(i).toString());
+                            }
+                        } catch (Exception e3) {
+                            utils.log("AlipayErr" + e3.toString(), false);
+                        }
                     }
                 }
 
