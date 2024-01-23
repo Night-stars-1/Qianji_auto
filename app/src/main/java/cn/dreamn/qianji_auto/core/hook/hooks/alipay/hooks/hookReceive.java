@@ -81,9 +81,11 @@ public class hookReceive {
         String templateName = jsonObject1.getString("templateName");
         if (title.equals("其他")) title = templateName;
 
+        /*
         JSONObject content = new JSONObject();
 
         content.put("title", title);
+
         JSONObject extraInfo = jsonObject1.getJSONObject("extraInfo");
         for (String key : extraInfo.keySet()) {
             if (!key.startsWith("assistName")) continue;
@@ -105,13 +107,13 @@ public class hookReceive {
             content.put("homePageTitle", jsonObject1.getString("homePageTitle"));
             utils.send(content);
         }
-        /*
+        */
         if (jsonObject1.getString("templateType").equals("BN")) {
             JSONObject content = jsonObject1.getJSONObject("content");
 
-            content.put("alipay_cache_shopremark", utils.readData("alipay_cache_shopremark", true));
-            content.put("alipay_cache_money", utils.readData("alipay_cache_money", true));
-            content.put("alipay_cache_payTool", utils.readData("alipay_cache_payTool", true));
+            content.put("alipay_cache_shopremark", utils.readData("alipay_cache_shopremark"));
+            content.put("alipay_cache_money", utils.readData("alipay_cache_money"));
+            content.put("alipay_cache_payTool", utils.readData("alipay_cache_payTool"));
 
             content.put("title", title);
             utils.send(content);
@@ -133,7 +135,7 @@ public class hookReceive {
             content.put("homePageTitle", jsonObject1.getString("homePageTitle"));
             utils.send(content);
         }
-        */
+
 
     }
 }

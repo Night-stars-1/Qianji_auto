@@ -328,8 +328,8 @@ public class DBHelper {
             values.put("money", (int) Double.parseDouble(money)*100);
             values.put("book_id", getBookId(bookName)); // 账本id
             values.put("category_id", getCategoryId(cateName, type==8?2:type==9?1:0)); // 分类id
-            values.put("to_capital_id", getAssetId(accountName2)); // 账户id
-            values.put("from_capital_id", getAssetId(accountName)); // 账户id
+            values.put("to_capital_id", type == 9 ? getAssetId(accountName):getAssetId(accountName2)); // 账户id
+            values.put("from_capital_id", type == 9? getAssetId(accountName2):getAssetId(accountName)); // 账户id
             values.put("fee", (int) Double.parseDouble(fee)*100);
             //values.put("seq_id", "seq_id");
             values.put("sync_status", "1");
@@ -344,7 +344,7 @@ public class DBHelper {
             values.put("excluded", "0");
             values.put("unique_no", "");
             values.put("source", "0");
-
+            utils.log(values.toString(), false);
             // 插入数据
             db.insert("transaction_basic", null, values);
 
