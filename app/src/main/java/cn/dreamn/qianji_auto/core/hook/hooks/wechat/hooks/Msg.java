@@ -62,8 +62,8 @@ public class Msg {
 
                     XmlToJson xmlToJson = new XmlToJson.Builder(contentValues.getAsString("content")).build();
                     String xml = xmlToJson.toString();
-                    jsonObject.put("content", JSONObject.parseObject(xml));
-                    /*
+                    //jsonObject.put("content", JSONObject.parseObject(xml));
+
                     JSONObject data = JSONObject.parseObject(xml);
                     if (!data.isEmpty() && data.containsKey("msg") && data.getJSONObject("msg").containsKey("appinfo")) {
                         JSONObject msg = data.getJSONObject("msg");
@@ -72,21 +72,21 @@ public class Msg {
                         jsonObject.put("time", msg.getJSONObject("appmsg").getJSONObject("mmreader").getJSONObject("category").getJSONObject("item").getString("pub_time"));
                         jsonObject.put("content", msg.getJSONObject("appmsg").getString("des"));
                     }
-                     */
+
                     jsonObject.put("cache_money", utils.readData("cache_wechat_payMoney"));
                     jsonObject.put("cache_user", utils.readData("cache_wechat_payUser"));
                     jsonObject.put("cache_user2", utils.readData("cache_userName"));
                     jsonObject.put("cache_paytools", utils.readData("cache_wechat_paytool"));
                     //转账消息
                     if (type == 419430449) {
-                        /*
+
                         // 收到的wcpayinfo下有payer_username
                         JSONObject msg = data.getJSONObject("msg");
                         JSONObject wcpayInfo = msg.getJSONObject("appmsg").getJSONObject("wcpayinfo");
                         jsonObject.put("money", wcpayInfo.getString("feedesc"));
                         jsonObject.put("pay_memo", wcpayInfo.getString("pay_memo"));
                         jsonObject.put("time", wcpayInfo.getString("invalidtime"));
-                        */
+
                         jsonObject.put("title", "转账消息");
                         utils.send(jsonObject);
                     } else if (type == 436207665) {
