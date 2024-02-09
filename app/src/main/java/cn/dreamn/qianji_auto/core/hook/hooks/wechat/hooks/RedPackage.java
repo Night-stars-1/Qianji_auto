@@ -73,7 +73,7 @@ public class RedPackage {
                 case 26:
                     isGroup = (str.equals("0")) ? "false" : "true";
                     break;
-                case 38:
+                case 36:
                     money = f;
                     break;
                 case 10:
