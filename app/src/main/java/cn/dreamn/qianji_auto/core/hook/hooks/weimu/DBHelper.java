@@ -325,7 +325,7 @@ public class DBHelper {
             ContentValues values = new ContentValues();
             values.put("id", generateRandomString(32));
             values.put("type", type); // 8:支出 9:收入
-            values.put("money", (int) Double.parseDouble(money)*100);
+            values.put("money", Double.parseDouble(money)*100);
             values.put("book_id", getBookId(bookName)); // 账本id
             values.put("category_id", getCategoryId(cateName, type==8?2:type==9?1:0)); // 分类id
             values.put("to_capital_id", type == 9 ? getAssetId(accountName):getAssetId(accountName2)); // 账户id

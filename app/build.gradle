@@ -18,8 +18,8 @@ android {
         applicationId "cn.dreamn.qianji_auto"
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 194
-        versionName "涅槃 3.4.2"
+        versionCode 196
+        versionName "涅槃 3.4.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             setAbiFilters(['arm64-v8a'])
