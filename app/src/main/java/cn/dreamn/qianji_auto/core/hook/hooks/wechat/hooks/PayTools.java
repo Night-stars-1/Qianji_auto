@@ -18,6 +18,8 @@
 package cn.dreamn.qianji_auto.core.hook.hooks.wechat.hooks;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.dreamn.qianji_auto.core.hook.Utils;
 import de.robv.android.xposed.XC_MethodHook;
@@ -25,7 +27,7 @@ import de.robv.android.xposed.XposedHelpers;
 
 public class PayTools {
     public static void init(Utils utils) {
-        final boolean[] isUser = {false};
+        final List<String> payList = new ArrayList<String>(4);
         ClassLoader mAppClassLoader = utils.getClassLoader();
         Class<?> MMKRichLabelView = XposedHelpers.findClass("com.tencent.kinda.framework.widget.base.MMKRichLabelView", mAppClassLoader);
         Class<?> KTex = XposedHelpers.findClass("com.tencent.kinda.gen.KText", mAppClassLoader);
@@ -40,10 +42,26 @@ public class PayTools {
                     return;
                 }
                 String data = get.invoke(param.args[0]).toString();
-                utils.log("设置数据：" + data, true);
+                // utils.log("设置数据：" + data, true);
 
-                String[] empty = new String[]{"支付", "使用", "请", "待", "识别", "失败"};
                 String[] cards = new String[]{"卡(", "零钱"};
+
+                if (data.startsWith("支付安全由")) {
+                    utils.log("识别商品名称：" + payList.get(0));
+                    utils.log("识别的金额：" + payList.get(1));
+                    utils.log("识别的商户：" + payList.get(3));
+                    utils.writeData("cache_wechat_payName", payList.get(0));
+                    utils.writeData("cache_wechat_payMoney", payList.get(1));
+                    utils.writeData("cache_wechat_payUser", payList.get(3));
+                } else if (inArray(data, cards, false)) {
+                    //支付账户
+                    utils.writeData("cache_wechat_paytool", data);
+                    utils.log("识别的账户名：" + data);
+                } else {
+                    payList.add(data);
+                }
+                /*
+                String[] empty = new String[]{"支付", "使用", "请", "待", "识别", "失败"};
                 String[] money = new String[]{"￥", "$"};
 
                 if (inArray(data, empty, true)) {
@@ -70,7 +88,7 @@ public class PayTools {
                     //商品名称
                     utils.writeData("cache_wechat_payName", data);
                 }
-
+                */
             }
 
             @Override
