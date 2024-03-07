@@ -264,10 +264,11 @@ public class DBHelper {
             openDb();
         }
         // type 1:收入 2:支出
-        Cursor cursor = db.rawQuery("SELECT * FROM category WHERE name = ? AND type = ? LIMIT 1", new String[]{cateName, String.valueOf(type)});
+        Cursor cursor = db.rawQuery("SELECT * FROM category WHERE (name = ? OR name = ?) AND type = ? LIMIT 1", new String[]{cateName, "其它", String.valueOf(type)});
         while (cursor.moveToNext()) {
             categoryId = cursor.getString(cursor.getColumnIndex("id"));
         }
+        utils.log("分类id: " + categoryId, false);
         cursor.close();
         if (type == 0) {
             categoryId = "";
@@ -287,7 +288,6 @@ public class DBHelper {
             openDb();
         }
         Cursor cursor = db.rawQuery("select * from capital_basic where name = ? LIMIT 1", new String[]{accountName});
-        JSONArray jsonArray = new JSONArray();
         while (cursor.moveToNext()) {
             assetId = cursor.getString(cursor.getColumnIndex("id")); // 金额
         }
