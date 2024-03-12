@@ -79,12 +79,25 @@ public class Utils {
         editor.apply();//提交修改
     }
 
+    public void writeData(String key, long value) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("ankio_xp", Context.MODE_PRIVATE); //私有数据
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();//获取编辑器
+
+        editor.putLong(key, value);
+
+        editor.apply();//提交修改
+    }
 
     public String readData(String key) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("ankio_xp", Context.MODE_PRIVATE); //私有数据
         return sharedPreferences.getString(key, "");
     }
 
+    public Long readLongData(String key) {
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("ankio_xp", Context.MODE_PRIVATE); //私有数据
+        return sharedPreferences.getLong(key, 0);
+    }
 
     //JSON数据转URL
     public static String convert(JSONObject object) {

@@ -79,6 +79,7 @@ public class Msg {
                     jsonObject.put("cache_user2", utils.readData("cache_userName"));
                     jsonObject.put("cache_paytools", utils.readData("cache_wechat_paytool"));
                     jsonObject.put("cache_name", utils.readData("cache_wechat_payName"));
+                    jsonObject.put("cache_time", utils.readLongData("cache_wechat_time") - System.currentTimeMillis());
 
                     //转账消息
                     if (type == 419430449) {

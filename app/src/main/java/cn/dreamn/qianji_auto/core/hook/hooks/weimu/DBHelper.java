@@ -268,7 +268,6 @@ public class DBHelper {
         while (cursor.moveToNext()) {
             categoryId = cursor.getString(cursor.getColumnIndex("id"));
         }
-        utils.log("分类id: " + categoryId, false);
         cursor.close();
         if (type == 0) {
             categoryId = "";

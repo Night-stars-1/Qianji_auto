@@ -27,7 +27,7 @@ import de.robv.android.xposed.XposedHelpers;
 
 public class PayTools {
     public static void init(Utils utils) {
-        final List<String> payList = new ArrayList<String>(4);
+        FixedSizeList<String> payList = new FixedSizeList<String>(4);
         ClassLoader mAppClassLoader = utils.getClassLoader();
         Class<?> MMKRichLabelView = XposedHelpers.findClass("com.tencent.kinda.framework.widget.base.MMKRichLabelView", mAppClassLoader);
         Class<?> KTex = XposedHelpers.findClass("com.tencent.kinda.gen.KText", mAppClassLoader);
@@ -42,7 +42,7 @@ public class PayTools {
                     return;
                 }
                 String data = get.invoke(param.args[0]).toString();
-                // utils.log("设置数据：" + data, true);
+                utils.log("设置数据：" + data, true);
 
                 String[] cards = new String[]{"卡(", "零钱"};
 
@@ -53,12 +53,14 @@ public class PayTools {
                     utils.writeData("cache_wechat_payName", payList.get(0));
                     utils.writeData("cache_wechat_payMoney", payList.get(1));
                     utils.writeData("cache_wechat_payUser", payList.get(3));
+                    utils.writeData("cache_wechat_time", System.currentTimeMillis());
                 } else if (inArray(data, cards, false)) {
                     //支付账户
                     utils.writeData("cache_wechat_paytool", data);
                     utils.log("识别的账户名：" + data);
                 } else {
                     payList.add(data);
+                    utils.log("识别的数据：" + payList);
                 }
                 /*
                 String[] empty = new String[]{"支付", "使用", "请", "待", "识别", "失败"};
@@ -109,4 +111,20 @@ public class PayTools {
         return false;
     }
 
+    public static class FixedSizeList<T> extends ArrayList<T> {
+        private final int capacity;
+
+        public FixedSizeList(int capacity) {
+            super(capacity);
+            this.capacity = capacity;
+        }
+
+        @Override
+        public boolean add(T t) {
+            if (size() == capacity) {
+                remove(0); // 移除最旧的元素
+            }
+            return super.add(t);
+        }
+    }
 }
